@@ -1,5 +1,6 @@
 package br.com.diy.ecommerce;
 
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -13,19 +14,23 @@ public class NewOrderMain {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         var producer = new KafkaProducer<String, String>(properties());
         // idPedido, idUsuario, valor
-        var value = "105, 3, 65.50";
+        var value = "6, 5, 17.00";
         var record = new ProducerRecord<>("ECOMMERCE_NEW_ORDER", value, value);
-        producer.send(record, (data, ex) -> {
-            if(ex != null){
+        Callback callback = (data, ex) -> {
+            if (ex != null) {
                 ex.printStackTrace();
                 return;
             }
             System.out.println("sucesso no envio: "
-                    + "| topic: " + data.topic()
-                    + "| partition: " + data.partition()
-                    + "| offset: " + data.offset()
-                    + "| " + data.timestamp());
-        }).get();
+                + "| topic: " + data.topic()
+                + "| partition: " + data.partition()
+                + "| offset: " + data.offset()
+                + "| " + data.timestamp());
+        };
+        var email = "Obrigado! Estamos processando sua ordem!";
+        var emailRecord = new ProducerRecord<>("ECOMMERCE_SEND_EMAIL", email, email);
+        producer.send(record, callback).get();
+        producer.send(emailRecord, callback).get();
     }
 
     private static Properties properties() {
