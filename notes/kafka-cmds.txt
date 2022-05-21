@@ -1,0 +1,33 @@
+INICIANDO O ZOOKEEPER
+%KAFKA_HOME%/bin/windows/zookeeper-server-start.bat %KAFKA_HOME%/config/zookeeper.properties
+
+INICIANDO O KAFKA
+%KAFKA_HOME%/bin/windows/kafka-server-start.bat %KAFKA_HOME%/config/server.properties
+
+PARANDO BROKERS
+%KAFKA_HOME%/bin/windows/kafka-server-stop.bat %KAFKA_HOME%/config/server.properties
+%KAFKA_HOME%/bin/windows/zookeeper-server-stop.bat %KAFKA_HOME%/config/zookeeper.properties
+
+CRIANDO TOPICOS:
+%KAFKA_HOME%/bin/windows/kafka-topics.bat --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic LOJA_NOVO_PEDIDO
+
+LISTANDO TOPICOS
+%KAFKA_HOME%/bin/windows/kafka-topics.bat --list --bootstrap-server localhost:9092
+
+DESCREVENDO TOPICOS
+%KAFKA_HOME%/bin/windows/kafka-topics.bat --bootstrap-server localhost:9092 --describe
+
+CRIANDO PRODUCER
+%KAFKA_HOME%/bin/windows/kafka-console-producer.bat --broker-list localhost:9092 --topic ECOMMERCE_NEW_ORDER
+
+CRIANDO CONSUMER - (ler desde o início)
+%KAFKA_HOME%/bin/windows/kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic ECOMMERCE_NEW_ORDER --from-beginning
+
+ALTERANDO PARTICOES DE UM TOPICO
+%KAFKA_HOME%/bin/windows/kafka-topics.bat --alter --zookeeper localhost:2181 --topic ECOMMERCE_NEW_ORDER --partitions 3
+
+CHECANDO DETALHES DOS CONSUMER-GROUPS
+%KAFKA_HOME%/bin/windows/kafka-consumer-groups.bat --bootstrap-server localhost:9092 --describe --all-groups
+
+DELETANDO?
+.\bin\windows\kafka-topics.bat --zookeeper localhost:2181 --topic ECOMMERCE_NEW_ORDERS --delete
